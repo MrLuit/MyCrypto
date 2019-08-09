@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { stripHexPrefix } from 'ethjs-util';
 import { Button } from '@mycrypto/ui';
 
+import Transaction from 'ethereumjs-tx';
+import { unlockPrivateKey } from 'v2/features/wallets';
 import PrivateKeyicon from 'common/assets/images/icn-privatekey-new.svg';
 import { TogglablePassword } from 'components';
 import { Input } from 'components/ui';
@@ -96,7 +98,10 @@ export default class SignTransactionPrivateKey extends Component<
             in order to send it. MyCrypto puts YOU in control of your assets.
           </div>
           <div className="SignTransactionPrivateKey-footer">
-            <Button className="SignTransactionPrivateKey-button"> Sign Transaction</Button>
+            <Button onClick={this.unlock} className="SignTransactionPrivateKey-button">
+              {' '}
+              Sign Transaction
+            </Button>
             <div className="SignTransactionPrivateKey-help">
               Not working? Here's some troubleshooting tips to try
             </div>
@@ -137,5 +142,12 @@ export default class SignTransactionPrivateKey extends Component<
   private unlock = async (e: React.SyntheticEvent<HTMLElement>) => {
     e.preventDefault();
     e.stopPropagation();
+    const { rawTransaction, onSuccess } = this.props;
+    const wallet = await unlockPrivateKey(this.state);
+    if (wallet) {
+      const tx = new Transaction(rawTransaction);
+      const signedTx = wallet.signRawTransaction(tx);
+      onSuccess('0x' + signedTx.toString('hex'));
+    }
   };
 }

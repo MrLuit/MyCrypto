@@ -116,7 +116,7 @@ const totalTxFeeToString = (gasPriceEther: string, gasLimit: string): string =>
   parseFloat(fromWei(totalTxFeeToWei(gasPriceEther, gasLimit), 'ether')).toFixed(6);
 
 const totalTxFeeToWei = (gasPriceEther: string, gasLimit: string): Wei =>
-  new BN(parseInt(gasPriceEther, 10) * parseInt(gasLimit, 10));
+  new BN(gasPriceEther, 10).add(new BN(gasLimit, 10));
 
 export {
   Data,
