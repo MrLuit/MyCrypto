@@ -6,7 +6,6 @@ import { useApi } from 'v2/services';
 import { TWalletType } from 'v2/types';
 import {
   ConfirmTransaction,
-  ConfirmWeb3Transaction,
   SendAssetsForm,
   SignTransaction,
   TransactionReceipt
@@ -23,9 +22,8 @@ function SendAssets() {
     handleSignedTx,
     handleSignedWeb3Tx,
     txConfig: txConfigState,
-    txReceipt: txReceiptState,
-    signedTx: signedTxState
-  } = useApi(TxConfigFactory, { txConfig: txConfigInitialState, txReceipt: null, signedTx: null });
+    txReceipt: txReceiptState
+  } = useApi(TxConfigFactory, { txConfig: txConfigInitialState, txReceipt: null });
 
   // tslint:disable-next-line
   const goToDashoard = () => {};
@@ -36,7 +34,7 @@ function SendAssets() {
     { label: 'Send Assets', component: SendAssetsForm, action: handleFormSubmit },
     {
       label: 'Confirm Transaction',
-      component: ConfirmWeb3Transaction,
+      component: ConfirmTransaction,
       action: handleConfirmAndSign
     },
     { label: '', component: SignTransaction, action: handleSignedWeb3Tx },
@@ -57,6 +55,7 @@ function SendAssets() {
   };
 
   const { senderAccount } = txConfigState;
+
   const { currentPath, label, Step, stepAction } = getStep(
     senderAccount ? senderAccount.wallet : undefined,
     step
@@ -76,7 +75,6 @@ function SendAssets() {
       <Step
         txReceipt={txReceiptState}
         txConfig={txConfigState}
-        signedTx={signedTxState}
         onComplete={(payload: IFormikFields | ITxReceipt) => stepAction(payload, goToNextStep)}
       />
     </ContentPanel>
